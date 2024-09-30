@@ -131,10 +131,29 @@
     </div>
 
     <script>
-      const albumArt = document.getElementById("album-art")
-      const trackInfo = document.getElementById("track-info")
-      const trackListContainer = document.getElementById("track-list-container")
-      const recentTracks = document.getElementById("recent-tracks")
+      const albumArt = document.getElementById("album-art");
+      const trackInfo = document.getElementById("track-info");
+      const trackListContainer = document.getElementById("track-list-container");
+      const recentTracks = document.getElementById("recent-tracks");
+      const audioPlayer = document.getElementById("audio-player");
+
+      // Function to update media session metadata
+      function updateMediaSession(nowPlaying) {
+        if ('mediaSession' in navigator) {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: nowPlaying.title,
+            artist: nowPlaying.artist || "Unknown Artist",
+            album: nowPlaying.album || "Unknown Album",
+            artwork: [
+              { src: nowPlaying.art, sizes: '512x512', type: 'image/jpeg' }
+            ]
+          });
+
+          // Optional: Add event handlers for play/pause/next/previous
+          navigator.mediaSession.setActionHandler('play', () => audioPlayer.play());
+          navigator.mediaSession.setActionHandler('pause', () => audioPlayer.pause());
+        }
+      }
 
       // Function to fetch recent track metadata
       function fetchRecentTracks() {
@@ -142,58 +161,61 @@
           .then((response) => response.json())
           .then((data) => {
             // Clear previous track list
-            trackListContainer.innerHTML = ""
+            trackListContainer.innerHTML = "";
 
             // Update the UI with the latest track info and album art
-            const nowPlaying = data.now_playing.song
-            const trackTitle = nowPlaying.title
-            const albumArtURL = nowPlaying.art
+            const nowPlaying = data.now_playing.song;
+            const trackTitle = nowPlaying.title;
+            const albumArtURL = nowPlaying.art;
 
-            trackInfo.textContent = trackTitle
-            albumArt.src = albumArtURL
+            trackInfo.textContent = trackTitle;
+            albumArt.src = albumArtURL;
+
+            // Update media session metadata
+            updateMediaSession(nowPlaying);
 
             // Loop through the song history
-            const songHistory = data.song_history
+            const songHistory = data.song_history;
             for (let i = 0; i < Math.min(songHistory.length, 5); i++) {
-              const track = songHistory[i]
-              const trackEntry = document.createElement("div")
-              trackEntry.classList.add("track-list")
+              const track = songHistory[i];
+              const trackEntry = document.createElement("div");
+              trackEntry.classList.add("track-list");
 
               trackEntry.innerHTML = ` 
-                            <img class="small-album-art" src="${track.song.art}" alt="Album Art">
-                            <div>
-                                <strong>${track.song.title}</strong><br>
-                                <span>${track.song.album}</span> <!-- Use album for display -->
-                            </div>
-                        `
+                <img class="small-album-art" src="${track.song.art}" alt="Album Art">
+                <div>
+                  <strong>${track.song.title}</strong><br>
+                  <span>${track.song.album}</span> <!-- Use album for display -->
+                </div>
+              `;
 
-              trackListContainer.appendChild(trackEntry)
+              trackListContainer.appendChild(trackEntry);
             }
           })
           .catch((error) => {
-            console.error("Error fetching metadata:", error)
-            trackInfo.textContent = "Unable to fetch metadata"
-          })
+            console.error("Error fetching metadata:", error);
+            trackInfo.textContent = "Unable to fetch metadata";
+          });
       }
 
       // Function to toggle recent tracks display
       function toggleRecentTracks() {
         if (recentTracks.classList.contains("show")) {
-          recentTracks.classList.remove("show")
-          recentTracks.style.maxHeight = "0" // Collapse the height
-          recentTracks.style.opacity = "0" // Fade out
+          recentTracks.classList.remove("show");
+          recentTracks.style.maxHeight = "0"; // Collapse the height
+          recentTracks.style.opacity = "0"; // Fade out
         } else {
-          recentTracks.classList.add("show")
-          recentTracks.style.maxHeight = "500px" // Set to max height for sliding effect
-          recentTracks.style.opacity = "1" // Fade in
-          recentTracks.scrollIntoView({ behavior: "smooth" }) // Scroll into view when expanded
-          fetchRecentTracks() // Fetch recent tracks when showing
+          recentTracks.classList.add("show");
+          recentTracks.style.maxHeight = "500px"; // Set to max height for sliding effect
+          recentTracks.style.opacity = "1"; // Fade in
+          recentTracks.scrollIntoView({ behavior: "smooth" }); // Scroll into view when expanded
+          fetchRecentTracks(); // Fetch recent tracks when showing
         }
       }
 
       // Fetch metadata every 10 seconds to keep the player updated
-      setInterval(fetchRecentTracks, 10000)
-      fetchRecentTracks() // Initial fetch on page load
+      setInterval(fetchRecentTracks, 10000);
+      fetchRecentTracks(); // Initial fetch on page load
     </script>
   </body>
 </html>
