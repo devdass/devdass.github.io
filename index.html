@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: "Arial", sans-serif;
-            background: url("") no-repeat center center fixed;
+            background: url("https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(1).jpg") no-repeat center center fixed;
             background-size: cover;
             color: white;
             display: flex;
@@ -21,12 +21,10 @@
 
         .player {
             background: rgba(0, 0, 0, 0.4);
-            /* Slightly lighter */
             border-radius: 15px;
             padding: 20px;
             box-shadow: 0 4px 20px rgba(100, 100, 100, 0.5);
             backdrop-filter: blur(10px);
-            /* Blur effect for glass look */
             transition: transform 0.2s;
             width: 300px;
             margin-top: 50px;
@@ -61,22 +59,24 @@
             text-align: center;
         }
 
+        .play-pause-container {
+            display: flex; /* Make the container flex */
+            justify-content: center; /* Center the button */
+            margin-top: 15px; /* Add some margin */
+        }
+
         .play-pause-button {
             background: none;
             border: none;
             font-size: 60px;
             color: white;
             cursor: pointer;
-            display: block;
-            width: 100%;
-            text-align: center;
-            margin-top: 15px;
-            padding: 0;
+            padding: 0; /* Remove padding */
+            transition: transform 0.3s; /* Button hover effect */
         }
 
         .play-pause-button:hover {
             transform: scale(1.2);
-            transition: transform 0.3s;
         }
 
         .toggle-button {
@@ -142,12 +142,14 @@
             <img id="album-art" class="album-art" src="default-art.jpg" alt="Album Art" />
         </div>
         <div id="track-info" class="track-info">Loading track info...</div>
-        <audio id="audio-player" autoplay>
+        <audio id="audio-player">
             <source src="https://a6.asurahosting.com:7530/radio.mp3" type="audio/mpeg" />
             Your browser does not support the audio element.
         </audio>
 
-        <button id="play-button" class="play-pause-button">⏸️</button>
+        <div class="play-pause-container">
+            <button id="play-button" class="play-pause-button">▶️</button>
+        </div>
 
         <button class="toggle-button" onclick="toggleRecentTracks()">
             Show Recent Tracks
@@ -159,19 +161,6 @@
     </div>
 
     <script>
-        const backgrounds = [
-            "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(1).jpg",
-            "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(2).jpg",
-            "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(3).jpg",
-            "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(4).jpg",
-            "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(5).jpg",
-            "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(6).jpg",
-        ];
-
-        // Randomly select a background
-        const randomBackground = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-        document.body.style.backgroundImage = `url('${randomBackground}')`;
-
         const playButton = document.getElementById("play-button");
         const audioPlayer = document.getElementById("audio-player");
         const albumArt = document.getElementById("album-art");
@@ -179,7 +168,7 @@
         const trackListContainer = document.getElementById("track-list-container");
         const recentTracks = document.getElementById("recent-tracks");
 
-        let isPlaying = true;
+        let isPlaying = false; // Start with audio not playing
 
         function updateMediaSession(nowPlaying) {
             if ("mediaSession" in navigator) {
@@ -192,12 +181,8 @@
                     ],
                 });
 
-                navigator.mediaSession.setActionHandler("play", () =>
-                    audioPlayer.play(),
-                );
-                navigator.mediaSession.setActionHandler("pause", () =>
-                    audioPlayer.pause(),
-                );
+                navigator.mediaSession.setActionHandler("play", () => audioPlayer.play());
+                navigator.mediaSession.setActionHandler("pause", () => audioPlayer.pause());
             }
         }
 
@@ -222,13 +207,13 @@
                         const trackEntry = document.createElement("div");
                         trackEntry.classList.add("track-list");
 
-                        trackEntry.innerHTML = ` 
-                <img class="small-album-art" src="${track.song.art}" alt="Album Art">
-                <div>
-                  <strong>${track.song.title}</strong><br>
-                  <span>${track.song.album}</span> 
-                </div>
-              `;
+                        trackEntry.innerHTML = `
+                            <img class="small-album-art" src="${track.song.art}" alt="Album Art">
+                            <div>
+                                <strong>${track.song.title}</strong><br>
+                                <span>${track.song.album}</span>
+                            </div>
+                        `;
 
                         trackListContainer.appendChild(trackEntry);
                     }
@@ -242,10 +227,10 @@
         playButton.addEventListener("click", () => {
             if (isPlaying) {
                 audioPlayer.pause();
-                playButton.textContent = "▶️";
+                playButton.textContent = "▶️"; // Change to play symbol
             } else {
                 audioPlayer.play();
-                playButton.textContent = "⏸️";
+                playButton.textContent = "⏸️"; // Change to pause symbol
             }
             isPlaying = !isPlaying;
         });
