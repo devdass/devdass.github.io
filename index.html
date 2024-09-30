@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shoutcast Player with Album Art</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(to right, #ff6f61, #6a82fb);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        text-align: center;
+        height: 100vh; /* Full height */
+        overflow: auto; /* Allow scrolling */
+      }
+      .player {
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        transition: transform 0.2s;
+        width: 300px;
+        position: relative; /* Position for child elements */
+        margin-bottom: 20px; /* Space at the bottom */
+      }
+      .player:hover {
+        transform: scale(1.05);
+      }
+      .album-art {
+        width: 200px;
+        height: 200px;
+        border-radius: 10px;
+        background-color: #ccc;
+        margin-bottom: 15px;
+        transition: transform 0.3s;
+      }
+      .album-art:hover {
+        transform: rotate(5deg);
+      }
+      .track-info {
+        margin-top: 10px;
+        font-size: 20px;
+        font-weight: bold;
+      }
+      audio {
+        width: 100%;
+        margin-top: 15px;
+        border-radius: 5px;
+        background: #ffffff;
+      }
+      .recent-tracks {
+        max-height: 0; /* Collapsed */
+        margin-top: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0 10px; /* Horizontal padding */
+        border-radius: 10px;
+        overflow: hidden; /* Hide overflow */
+        transition:
+          max-height 0.5s ease-in-out,
+          opacity 0.5s ease-in-out; /* Transition */
+        opacity: 0; /* Start hidden */
+      }
+      .recent-tracks.show {
+        max-height: 300px; /* Expanded height */
+        opacity: 1; /* Visible */
+      }
+      .toggle-button {
+        background-color: #6a82fb;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 15px;
+        transition: background-color 0.3s;
+      }
+      .toggle-button:hover {
+        background-color: #ff6f61;
+      }
+      .track-list {
+        font-size: 12px; /* Track info size */
+        color: white;
+        margin: 5px 0; /* Space between tracks */
+        display: flex; /* Flex for alignment */
+        align-items: center; /* Center items */
+        text-align: left; /* Left align text */
+      }
+      .small-album-art {
+        width: 50px; /* Reduced album art size */
+        height: 50px;
+        border-radius: 5px;
+        margin-right: 10px; /* Space between art and text */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="player">
+      <img
+        id="album-art"
+        class="album-art"
+        src="default-art.jpg"
+        alt="Album Art"
+      />
+      <div id="track-info" class="track-info">Loading track info...</div>
+      <audio controls id="audio-player">
+        <source
+          src="https://cast5.asurahosting.com//proxy/dev1/stream"
+          type="audio/mpeg"
+        />
+        Your browser does not support the audio element.
+      </audio>
+      <button
+        class="toggle-button"
+        onclick="toggleRecentTracks()"
+        aria-label="Toggle Recent Tracks"
+      >
+        Show Recent Tracks
+      </button>
+      <div id="recent-tracks" class="recent-tracks">
+        <div id="track-list-container"></div>
+      </div>
+    </div>
+
+    <script>
+      const albumArt = document.getElementById("album-art")
+      const trackInfo = document.getElementById("track-info")
+      const trackListContainer = document.getElementById("track-list-container")
+      const recentTracks = document.getElementById("recent-tracks")
+
+      // Function to fetch recent track metadata
+      function fetchRecentTracks() {
+        fetch("https://cast5.asurahosting.com/recentfeed/dev1/json/")
+          .then((response) => response.json())
+          .then((data) => {
+            trackListContainer.innerHTML = "" // Clear previous list
+
+            if (data.items && data.items.length > 0) {
+              const latestTrack = data.items[0]
+              trackInfo.textContent = latestTrack.title
+              albumArt.src = latestTrack.enclosure.url
+
+              for (let i = 0; i < Math.min(data.items.length, 5); i++) {
+                const track = data.items[i]
+                const trackEntry = document.createElement("div")
+                trackEntry.classList.add("track-list")
+                trackEntry.innerHTML = `
+                                <img class="small-album-art" src="${track.enclosure.url}" alt="Album Art">
+                                <div>
+                                    <strong>${track.title}</strong><br>
+                                    <span>${track.description}</span>
+                                </div>
+                            `
+                trackListContainer.appendChild(trackEntry)
+              }
+            } else {
+              trackInfo.textContent = "No recent tracks available."
+              albumArt.src = "default-art.jpg"
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching metadata:", error)
+            trackInfo.textContent = "Unable to fetch metadata"
+          })
+      }
+
+      // Function to toggle recent tracks display
+      function toggleRecentTracks() {
+        if (recentTracks.classList.contains("show")) {
+          recentTracks.classList.remove("show")
+          recentTracks.style.maxHeight = "0" // Collapse height
+          recentTracks.style.opacity = "0" // Fade out
+        } else {
+          recentTracks.classList.add("show")
+          recentTracks.style.maxHeight = "300px" // Set height for expansion
+          recentTracks.style.opacity = "1" // Fade in
+          recentTracks.scrollIntoView({ behavior: "smooth" }) // Scroll into view
+          fetchRecentTracks() // Fetch recent tracks when showing
+        }
+      }
+
+      // Fetch metadata every 10 seconds
+      setInterval(fetchRecentTracks, 10000)
+      fetchRecentTracks() // Initial fetch on load
+    </script>
+  </body>
+</html>
