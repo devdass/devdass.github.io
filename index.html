@@ -3,19 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dev's 24/7 Radio</title>
+    <title>Shoutcast Player with Album Art</title>
     <style>
       body {
         font-family: "Arial", sans-serif;
         background: linear-gradient(to right, #ff6f61, #6a82fb);
         color: white;
         display: flex;
-        justify-content: center;
-        align-items: center;
+        justify-content: center; /* Center horizontally */
+        align-items: flex-start; /* Align items to the top */
         margin: 0;
-        text-align: center;
         height: 100vh; /* Full height */
-        overflow: auto; /* Allow scrolling */
+        overflow: auto; /* Allow scrolling if needed */
       }
       .player {
         background: rgba(0, 0, 0, 0.7);
@@ -24,18 +23,21 @@
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         transition: transform 0.2s;
         width: 300px;
-        position: relative; /* Position for child elements */
-        margin-bottom: 20px; /* Space at the bottom */
+        margin-top: 50px; /* Space from the top */
       }
       .player:hover {
         transform: scale(1.05);
+      }
+      .album-art-wrapper {
+        display: flex; /* Flexbox for centering */
+        justify-content: center; /* Center horizontally */
+        margin-bottom: 15px; /* Space below album art */
       }
       .album-art {
         width: 200px;
         height: 200px;
         border-radius: 10px;
         background-color: #ccc;
-        margin-bottom: 15px;
         transition: transform 0.3s;
       }
       .album-art:hover {
@@ -53,20 +55,22 @@
         background: #ffffff;
       }
       .recent-tracks {
-        max-height: 0; /* Collapsed */
+        max-height: 0; /* Initially collapsed */
         margin-top: 15px;
+        margin-bottom: 15px; /* Add bottom margin for spacing */
         background: rgba(255, 255, 255, 0.1);
-        padding: 0 10px; /* Horizontal padding */
+        padding: 0 10px; /* Add horizontal padding */
         border-radius: 10px;
         overflow: hidden; /* Hide overflow */
         transition:
           max-height 0.5s ease-in-out,
-          opacity 0.5s ease-in-out; /* Transition */
+          opacity 0.5s ease-in-out; /* Transition for expanding */
         opacity: 0; /* Start hidden */
       }
       .recent-tracks.show {
-        max-height: 300px; /* Expanded height */
-        opacity: 1; /* Visible */
+        max-height: 500px; /* Increased max height for expansion */
+        opacity: 1; /* Fade in */
+        overflow-y: auto; /* Allow vertical scroll */
       }
       .toggle-button {
         background-color: #6a82fb;
@@ -77,34 +81,37 @@
         cursor: pointer;
         margin-top: 15px;
         transition: background-color 0.3s;
+        width: 100%; /* Make button full width */
       }
       .toggle-button:hover {
         background-color: #ff6f61;
       }
       .track-list {
-        font-size: 12px; /* Track info size */
+        font-size: 12px; /* Track info font size */
         color: white;
-        margin: 5px 0; /* Space between tracks */
-        display: flex; /* Flex for alignment */
-        align-items: center; /* Center items */
+        margin: 5px 0; /* Space between track entries */
+        display: flex; /* Flexbox for alignment */
+        align-items: center; /* Center items vertically */
         text-align: left; /* Left align text */
       }
       .small-album-art {
-        width: 50px; /* Reduced album art size */
-        height: 50px;
-        border-radius: 5px;
+        width: 50px; /* Size for album art */
+        height: 50px; /* Size for album art */
+        border-radius: 5px; /* Rounded corners */
         margin-right: 10px; /* Space between art and text */
       }
     </style>
   </head>
   <body>
     <div class="player">
-      <img
-        id="album-art"
-        class="album-art"
-        src="default-art.jpg"
-        alt="Album Art"
-      />
+      <div class="album-art-wrapper">
+        <img
+          id="album-art"
+          class="album-art"
+          src="default-art.jpg"
+          alt="Album Art"
+        />
+      </div>
       <div id="track-info" class="track-info">Loading track info...</div>
       <audio controls id="audio-player">
         <source
@@ -113,13 +120,11 @@
         />
         Your browser does not support the audio element.
       </audio>
-      <button
-        class="toggle-button"
-        onclick="toggleRecentTracks()"
-        aria-label="Toggle Recent Tracks"
-      >
+
+      <button class="toggle-button" onclick="toggleRecentTracks()">
         Show Recent Tracks
       </button>
+
       <div id="recent-tracks" class="recent-tracks">
         <div id="track-list-container"></div>
       </div>
@@ -133,27 +138,36 @@
 
       // Function to fetch recent track metadata
       function fetchRecentTracks() {
-        fetch("https://cast5.asurahosting.com/recentfeed/dev1/json/")
+        fetch("https://cast5.asurahosting.com/recentfeed/dev1/json/") // JSON feed URL
           .then((response) => response.json())
           .then((data) => {
-            trackListContainer.innerHTML = "" // Clear previous list
+            // Clear previous track list
+            trackListContainer.innerHTML = ""
 
+            // Check if the feed has items
             if (data.items && data.items.length > 0) {
+              // Update the UI with the latest track info and album art
               const latestTrack = data.items[0]
-              trackInfo.textContent = latestTrack.title
-              albumArt.src = latestTrack.enclosure.url
+              const trackTitle = latestTrack.title
+              const albumArtURL = latestTrack.enclosure.url
 
+              trackInfo.textContent = trackTitle
+              albumArt.src = albumArtURL
+
+              // Loop through the last 5 tracks
               for (let i = 0; i < Math.min(data.items.length, 5); i++) {
                 const track = data.items[i]
                 const trackEntry = document.createElement("div")
                 trackEntry.classList.add("track-list")
-                trackEntry.innerHTML = `
-                                <img class="small-album-art" src="${track.enclosure.url}" alt="Album Art">
-                                <div>
-                                    <strong>${track.title}</strong><br>
-                                    <span>${track.description}</span>
-                                </div>
-                            `
+
+                trackEntry.innerHTML = ` 
+                  <img class="small-album-art" src="${track.enclosure.url}" alt="Album Art">
+                  <div>
+                    <strong>${track.title}</strong><br>
+                    <span>${track.description}</span> <!-- Use description for album name -->
+                  </div>
+                `
+
                 trackListContainer.appendChild(trackEntry)
               }
             } else {
@@ -171,20 +185,20 @@
       function toggleRecentTracks() {
         if (recentTracks.classList.contains("show")) {
           recentTracks.classList.remove("show")
-          recentTracks.style.maxHeight = "0" // Collapse height
+          recentTracks.style.maxHeight = "0" // Collapse the height
           recentTracks.style.opacity = "0" // Fade out
         } else {
           recentTracks.classList.add("show")
-          recentTracks.style.maxHeight = "300px" // Set height for expansion
+          recentTracks.style.maxHeight = "500px" // Set to max height for sliding effect
           recentTracks.style.opacity = "1" // Fade in
-          recentTracks.scrollIntoView({ behavior: "smooth" }) // Scroll into view
+          recentTracks.scrollIntoView({ behavior: "smooth" }) // Scroll into view when expanded
           fetchRecentTracks() // Fetch recent tracks when showing
         }
       }
 
-      // Fetch metadata every 10 seconds
+      // Fetch metadata every 10 seconds to keep the player updated
       setInterval(fetchRecentTracks, 10000)
-      fetchRecentTracks() // Initial fetch on load
+      fetchRecentTracks() // Initial fetch on page load
     </script>
   </body>
 </html>
