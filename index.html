@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dev's 24/7 Radio</title>
+    <title>DK 24/7 Radio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Frijole&display=swap" rel="stylesheet" />
     <style>
         body {
             font-family: "Arial", sans-serif;
@@ -17,9 +18,16 @@
             margin: 0;
             height: 100vh;
             overflow: auto;
+            position: relative;
         }
 
         .player {
+            display: flex;
+            /* Set to flex */
+            flex-direction: column;
+            /* Arrange children in a column */
+            align-items: center;
+            /* Center children horizontally */
             background: rgba(0, 0, 0, 0.4);
             border-radius: 15px;
             padding: 20px;
@@ -27,29 +35,59 @@
             backdrop-filter: blur(10px);
             transition: transform 0.2s;
             width: 300px;
-            margin-top: 50px;
+            margin-top: 20px;
+            /* Add margin to avoid overlap with the title */
+            position: relative;
+            /* Position relative for inner elements */
         }
 
-        .player:hover {
-            transform: scale(1.05);
+        .station-title {
+            font-family: "Frijole", cursive;
+            /* Use Frijole font */
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            /* Space below the title */
         }
 
-        .album-art-wrapper {
+        .live-container {
             display: flex;
             justify-content: center;
-            margin-bottom: 15px;
+            align-items: center;
+            border: 1px solid white;
+            border-radius: 20px;
+            padding: 5px;
+            margin-top: 15px;
         }
 
-        .album-art {
-            width: 200px;
-            height: 200px;
-            border-radius: 10px;
-            background-color: #ccc;
-            transition: transform 0.3s;
+        .live-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: red;
+            display: inline-block;
+            animation: blink 1s infinite;
+            margin-right: 5px;
+            /* Space between dot and text */
         }
 
-        .album-art:hover {
-            transform: rotate(5deg);
+        .live-text {
+            color: white;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
         }
 
         .track-info {
@@ -60,9 +98,10 @@
         }
 
         .play-pause-container {
-            display: flex; /* Make the container flex */
-            justify-content: center; /* Center the button */
-            margin-top: 15px; /* Add some margin */
+            display: flex;
+            /* Make the container flex */
+            justify-content: center;
+            /* Center the button */
         }
 
         .play-pause-button {
@@ -71,8 +110,10 @@
             font-size: 60px;
             color: white;
             cursor: pointer;
-            padding: 0; /* Remove padding */
-            transition: transform 0.3s; /* Button hover effect */
+            padding: 0;
+            /* Remove padding */
+            transition: transform 0.3s;
+            /* Button hover effect */
         }
 
         .play-pause-button:hover {
@@ -133,15 +174,29 @@
             border-radius: 5px;
             margin-right: 10px;
         }
+
+        .album-art {
+            width: 100%;
+            /* Make album art responsive */
+            border-radius: 5px;
+        }
     </style>
 </head>
 
 <body>
     <div class="player">
+        <div class="station-title">DK 24/7 Radio</div>
+
         <div class="album-art-wrapper">
             <img id="album-art" class="album-art" src="default-art.jpg" alt="Album Art" />
         </div>
         <div id="track-info" class="track-info">Loading track info...</div>
+
+        <div class="live-container">
+            <div class="live-indicator"></div>
+            <span class="live-text">LIVE</span>
+        </div>
+
         <audio id="audio-player">
             <source src="https://a6.asurahosting.com:7530/radio.mp3" type="audio/mpeg" />
             Your browser does not support the audio element.
@@ -161,14 +216,14 @@
     </div>
 
     <script>
-        const playButton = document.getElementById("play-button");
-        const audioPlayer = document.getElementById("audio-player");
-        const albumArt = document.getElementById("album-art");
-        const trackInfo = document.getElementById("track-info");
-        const trackListContainer = document.getElementById("track-list-container");
-        const recentTracks = document.getElementById("recent-tracks");
+        const playButton = document.getElementById("play-button")
+        const audioPlayer = document.getElementById("audio-player")
+        const albumArt = document.getElementById("album-art")
+        const trackInfo = document.getElementById("track-info")
+        const trackListContainer = document.getElementById("track-list-container")
+        const recentTracks = document.getElementById("recent-tracks")
 
-        let isPlaying = false; // Start with audio not playing
+        let isPlaying = false // Start with audio not playing
 
         function updateMediaSession(nowPlaying) {
             if ("mediaSession" in navigator) {
@@ -179,10 +234,14 @@
                     artwork: [
                         { src: nowPlaying.art, sizes: "512x512", type: "image/jpeg" },
                     ],
-                });
+                })
 
-                navigator.mediaSession.setActionHandler("play", () => audioPlayer.play());
-                navigator.mediaSession.setActionHandler("pause", () => audioPlayer.pause());
+                navigator.mediaSession.setActionHandler("play", () =>
+                    audioPlayer.play(),
+                )
+                navigator.mediaSession.setActionHandler("pause", () =>
+                    audioPlayer.pause(),
+                )
             }
         }
 
@@ -190,22 +249,22 @@
             fetch("https://a6.asurahosting.com/api/nowplaying/349")
                 .then((response) => response.json())
                 .then((data) => {
-                    trackListContainer.innerHTML = "";
+                    trackListContainer.innerHTML = ""
 
-                    const nowPlaying = data.now_playing.song;
-                    const trackTitle = nowPlaying.title;
-                    const albumArtURL = nowPlaying.art;
+                    const nowPlaying = data.now_playing.song
+                    const trackTitle = nowPlaying.title
+                    const albumArtURL = nowPlaying.art
 
-                    trackInfo.textContent = trackTitle;
-                    albumArt.src = albumArtURL;
+                    trackInfo.textContent = trackTitle
+                    albumArt.src = albumArtURL
 
-                    updateMediaSession(nowPlaying);
+                    updateMediaSession(nowPlaying)
 
-                    const songHistory = data.song_history;
+                    const songHistory = data.song_history
                     for (let i = 0; i < Math.min(songHistory.length, 5); i++) {
-                        const track = songHistory[i];
-                        const trackEntry = document.createElement("div");
-                        trackEntry.classList.add("track-list");
+                        const track = songHistory[i]
+                        const trackEntry = document.createElement("div")
+                        trackEntry.classList.add("track-list")
 
                         trackEntry.innerHTML = `
                             <img class="small-album-art" src="${track.song.art}" alt="Album Art">
@@ -213,44 +272,35 @@
                                 <strong>${track.song.title}</strong><br>
                                 <span>${track.song.album}</span>
                             </div>
-                        `;
+                        `
 
-                        trackListContainer.appendChild(trackEntry);
+                        trackListContainer.appendChild(trackEntry)
                     }
                 })
                 .catch((error) => {
-                    console.error("Error fetching metadata:", error);
-                    trackInfo.textContent = "Unable to fetch metadata";
-                });
+                    console.error("Error fetching metadata:", error)
+                    trackInfo.textContent = "Unable to fetch metadata"
+                })
         }
 
         playButton.addEventListener("click", () => {
             if (isPlaying) {
-                audioPlayer.pause();
-                playButton.textContent = "▶️"; // Change to play symbol
+                audioPlayer.pause()
+                playButton.textContent = "▶️"
             } else {
-                audioPlayer.play();
-                playButton.textContent = "⏸️"; // Change to pause symbol
+                audioPlayer.play()
+                playButton.textContent = "⏸️"
             }
-            isPlaying = !isPlaying;
-        });
+            isPlaying = !isPlaying
+        })
 
         function toggleRecentTracks() {
-            if (recentTracks.classList.contains("show")) {
-                recentTracks.classList.remove("show");
-                recentTracks.style.maxHeight = "0";
-                recentTracks.style.opacity = "0";
-            } else {
-                recentTracks.classList.add("show");
-                recentTracks.style.maxHeight = "500px";
-                recentTracks.style.opacity = "1";
-                recentTracks.scrollIntoView({ behavior: "smooth" });
-                fetchRecentTracks();
-            }
+            recentTracks.classList.toggle("show")
+            fetchRecentTracks() // Fetch tracks when showing the list
         }
 
-        setInterval(fetchRecentTracks, 10000);
-        fetchRecentTracks();
+        // Initial fetch of recent tracks when the page loads
+        fetchRecentTracks()
     </script>
 </body>
 
