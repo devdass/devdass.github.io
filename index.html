@@ -115,7 +115,7 @@
       <div id="track-info" class="track-info">Loading track info...</div>
       <audio controls id="audio-player">
         <source
-          src="https://cast5.asurahosting.com//proxy/dev1/stream"
+          src="https://a6.asurahosting.com:7530/radio.mp3"
           type="audio/mpeg"
         />
         Your browser does not support the audio element.
@@ -138,41 +138,36 @@
 
       // Function to fetch recent track metadata
       function fetchRecentTracks() {
-        fetch("https://cast5.asurahosting.com/recentfeed/dev1/json/") // JSON feed URL
+        fetch("https://a6.asurahosting.com/api/nowplaying/349") // JSON feed URL
           .then((response) => response.json())
           .then((data) => {
             // Clear previous track list
             trackListContainer.innerHTML = ""
 
-            // Check if the feed has items
-            if (data.items && data.items.length > 0) {
-              // Update the UI with the latest track info and album art
-              const latestTrack = data.items[0]
-              const trackTitle = latestTrack.title
-              const albumArtURL = latestTrack.enclosure.url
+            // Update the UI with the latest track info and album art
+            const nowPlaying = data.now_playing.song
+            const trackTitle = nowPlaying.title
+            const albumArtURL = nowPlaying.art
 
-              trackInfo.textContent = trackTitle
-              albumArt.src = albumArtURL
+            trackInfo.textContent = trackTitle
+            albumArt.src = albumArtURL
 
-              // Loop through the last 5 tracks
-              for (let i = 0; i < Math.min(data.items.length, 5); i++) {
-                const track = data.items[i]
-                const trackEntry = document.createElement("div")
-                trackEntry.classList.add("track-list")
+            // Loop through the song history
+            const songHistory = data.song_history
+            for (let i = 0; i < Math.min(songHistory.length, 5); i++) {
+              const track = songHistory[i]
+              const trackEntry = document.createElement("div")
+              trackEntry.classList.add("track-list")
 
-                trackEntry.innerHTML = ` 
-                  <img class="small-album-art" src="${track.enclosure.url}" alt="Album Art">
-                  <div>
-                    <strong>${track.title}</strong><br>
-                    <span>${track.description}</span> <!-- Use description for album name -->
-                  </div>
-                `
+              trackEntry.innerHTML = ` 
+                            <img class="small-album-art" src="${track.song.art}" alt="Album Art">
+                            <div>
+                                <strong>${track.song.title}</strong><br>
+                                <span>${track.song.album}</span> <!-- Use album for display -->
+                            </div>
+                        `
 
-                trackListContainer.appendChild(trackEntry)
-              }
-            } else {
-              trackInfo.textContent = "No recent tracks available."
-              albumArt.src = "default-art.jpg"
+              trackListContainer.appendChild(trackEntry)
             }
           })
           .catch((error) => {
