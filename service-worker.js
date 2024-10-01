@@ -5,7 +5,8 @@ const assetsToCache = [
   'https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/favicon.ico',
   'https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(1).jpg',
   'https://fonts.googleapis.com/css2?family=Frijole&display=swap',
-  'https://a6.asurahosting.com:7530/radio.mp3'
+  'https://a6.asurahosting.com:7530/radio.mp3',
+  'https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/icon-180.png' // Include the new icon in the cache
 ];
 
 // Install service worker and cache all assets
