@@ -9,6 +9,9 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="DK 24/7 Radio">
 
   <style>
     body {
@@ -225,12 +228,8 @@
           ],
         });
 
-        navigator.mediaSession.setActionHandler("play", () =>
-          audioPlayer.play(),
-        );
-        navigator.mediaSession.setActionHandler("pause", () =>
-          audioPlayer.pause(),
-        );
+        navigator.mediaSession.setActionHandler("play", () => audioPlayer.play());
+        navigator.mediaSession.setActionHandler("pause", () => audioPlayer.pause());
       }
     }
 
