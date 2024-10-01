@@ -13,14 +13,19 @@
       "sizes": "16x16"
     },
     {
-      "src": "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/icon-192.png",  // Add a 192x192 icon here
+      "src": "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/icon-192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/icon-512.png",  // Add a 512x512 icon here
+      "src": "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/icon-512.png",
       "type": "image/png",
       "sizes": "512x512"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/icon-180.png", // 180x180 icon for iOS
+      "type": "image/png",
+      "sizes": "180x180"
     }
   ]
 }
