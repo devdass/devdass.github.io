@@ -5,8 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DK 24/7 Radio</title>
-  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/favicon.ico">
   <link href="https://fonts.googleapis.com/css2?family=Frijole&display=swap" rel="stylesheet" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <meta name="theme-color" content="#000000" />
+
   <style>
     body {
       font-family: "Arial", sans-serif;
@@ -73,12 +76,9 @@
     }
 
     @keyframes blink {
-
-      0%,
-      100% {
+      0%, 100% {
         opacity: 1;
       }
-
       50% {
         opacity: 0;
       }
@@ -138,9 +138,7 @@
       padding: 0 10px;
       border-radius: 10px;
       overflow: hidden;
-      transition:
-        max-height 0.5s ease-in-out,
-        opacity 0.5s ease-in-out;
+      transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
       opacity: 0;
     }
 
@@ -171,6 +169,7 @@
       border-radius: 5px;
     }
   </style>
+
 </head>
 
 <body>
@@ -302,6 +301,21 @@
     // Set an interval to fetch recent tracks every 10 seconds
     setInterval(fetchRecentTracks, 10000); // Fetch every 10 seconds
   </script>
+
+  <script>
+    // Register the service worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then((registration) => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          }, (error) => {
+            console.log('ServiceWorker registration failed: ', error);
+          });
+      });
+    }
+  </script>
+
 </body>
 
 </html>
