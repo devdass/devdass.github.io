@@ -3,6 +3,7 @@
   "short_name": "DK Radio",
   "description": "Listen to DK 24/7 Radio Live!",
   "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
