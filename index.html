@@ -1,318 +1,306 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DK 24/7 Radio</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Frijole&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      body {
-        font-family: "Arial", sans-serif;
-        background: url("https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(1).jpg")
-          no-repeat center center fixed;
-        background-size: cover;
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        margin: 0;
-        height: 100vh;
-        overflow: auto;
-        position: relative;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DK 24/7 Radio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Frijole&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      background: url("https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(1).jpg") no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      margin: 0;
+      height: 100vh;
+      overflow: auto;
+      position: relative;
+    }
+
+    .player {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(100, 100, 100, 0.5);
+      backdrop-filter: blur(10px);
+      transition: transform 0.2s;
+      width: 300px;
+      margin-top: 20px;
+      position: relative;
+    }
+
+    .station-title {
+      font-family: "Frijole", cursive;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .live-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid white;
+      border-radius: 20px;
+      padding: 5px;
+      margin-top: 15px;
+    }
+
+    .live-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: red;
+      display: inline-block;
+      animation: blink 1s infinite;
+      margin-right: 5px;
+    }
+
+    .live-text {
+      color: white;
+      font-weight: bold;
+      font-size: 11px;
+      margin-right: 4px;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
       }
 
-      .player {
-        display: flex;
-        /* Set to flex */
-        flex-direction: column;
-        /* Arrange children in a column */
-        align-items: center;
-        /* Center children horizontally */
-        background: rgba(0, 0, 0, 0.4);
-        border-radius: 15px;
-        padding: 20px;
-        box-shadow: 0 4px 20px rgba(100, 100, 100, 0.5);
-        backdrop-filter: blur(10px);
-        transition: transform 0.2s;
-        width: 300px;
-        margin-top: 20px;
-        /* Add margin to avoid overlap with the title */
-        position: relative;
-        /* Position relative for inner elements */
-      }
-
-      .station-title {
-        font-family: "Frijole", cursive;
-        /* Use Frijole font */
-        font-size: 24px;
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 10px;
-        /* Space below the title */
-      }
-
-      .live-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border: 1px solid white;
-        border-radius: 20px;
-        padding: 5px;
-        margin-top: 15px;
-      }
-
-      .live-indicator {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background-color: red;
-        display: inline-block;
-        animation: blink 1s infinite;
-        margin-right: 5px;
-        /* Space between dot and text */
-      }
-
-      .live-text {
-        color: white;
-        font-weight: bold;
-        font-size: 11px;
-        margin-right: 4px;
-      }
-
-      @keyframes blink {
-        0%,
-        100% {
-          opacity: 1;
-        }
-
-        50% {
-          opacity: 0;
-        }
-      }
-
-      .track-info {
-        margin-top: 10px;
-        font-size: 20px;
-        font-weight: bold;
-        text-align: center;
-      }
-
-      .play-pause-container {
-        display: flex;
-        /* Make the container flex */
-        justify-content: center;
-        /* Center the button */
-        margin-top: 10px;
-      }
-
-      .play-pause-button {
-        background: none;
-        border: none;
-        font-size: 60px;
-        color: white;
-        cursor: pointer;
-        padding: 0;
-        /* Remove padding */
-        transition: transform 0.3s;
-        /* Button hover effect */
-      }
-
-      .play-pause-button:hover {
-        transform: scale(1.2);
-      }
-
-      .toggle-button {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 15px;
-        font-size: 16px;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .toggle-button:hover {
-        background: rgba(0, 0, 0, 0.3);
-      }
-
-      .recent-tracks {
-        max-height: 0;
-        margin-top: 15px;
-        margin-bottom: 15px;
-        background: rgba(255, 255, 255, 0.1);
-        padding: 0 10px;
-        border-radius: 10px;
-        overflow: hidden;
-        transition:
-          max-height 0.5s ease-in-out,
-          opacity 0.5s ease-in-out;
+      50% {
         opacity: 0;
       }
+    }
 
-      .recent-tracks.show {
-        max-height: 500px;
-        opacity: 1;
-        overflow-y: auto;
-      }
+    .track-info {
+      margin-top: 10px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
 
-      .track-list {
-        font-size: 12px;
-        color: white;
-        margin: 5px 0;
-        display: flex;
-        align-items: center;
-        text-align: left;
-      }
+    .play-pause-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
 
-      .small-album-art {
-        width: 50px;
-        height: 50px;
-        border-radius: 5px;
-        margin-right: 10px;
-      }
+    .play-pause-button {
+      background: none;
+      border: none;
+      font-size: 60px;
+      color: white;
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.3s;
+    }
 
-      .album-art {
-        width: 100%;
-        /* Make album art responsive */
-        border-radius: 5px;
-      }
-    </style>
-  </head>
+    .play-pause-button:hover {
+      transform: scale(1.2);
+    }
 
-  <body>
-    <div class="player">
-      <div class="station-title">DK 24/7 Radio</div>
+    .toggle-button {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+      font-size: 16px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-      <div class="album-art-wrapper">
-        <img
-          id="album-art"
-          class="album-art"
-          src="default-art.jpg"
-          alt="Album Art"
-        />
-      </div>
-      <div id="track-info" class="track-info">Loading track info...</div>
+    .toggle-button:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
 
-      <div class="live-container">
-        <div class="live-indicator"></div>
-        <span class="live-text">LIVE</span>
-      </div>
+    .recent-tracks {
+      max-height: 0;
+      margin-top: 15px;
+      margin-bottom: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0 10px;
+      border-radius: 10px;
+      overflow: hidden;
+      transition:
+        max-height 0.5s ease-in-out,
+        opacity 0.5s ease-in-out;
+      opacity: 0;
+    }
 
-      <audio id="audio-player">
-        <source
-          src="https://a6.asurahosting.com:7530/radio.mp3"
-          type="audio/mpeg"
-        />
-        Your browser does not support the audio element.
-      </audio>
+    .recent-tracks.show {
+      max-height: 500px;
+      opacity: 1;
+      overflow-y: auto;
+    }
 
-      <div class="play-pause-container">
-        <button id="play-button" class="play-pause-button">▶️</button>
-      </div>
+    .track-list {
+      font-size: 12px;
+      color: white;
+      margin: 5px 0;
+      display: flex;
+      align-items: center;
+      text-align: left;
+    }
 
-      <button class="toggle-button" onclick="toggleRecentTracks()">
-        Show Recent Tracks
-      </button>
+    .small-album-art {
+      width: 50px;
+      height: 50px;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
 
-      <div id="recent-tracks" class="recent-tracks">
-        <div id="track-list-container"></div>
-      </div>
+    .album-art {
+      width: 100%;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="player">
+    <div class="station-title">DK 24/7 Radio</div>
+
+    <div class="album-art-wrapper">
+      <img id="album-art" class="album-art" src="default-art.jpg" alt="Album Art" />
+    </div>
+    <div id="track-info" class="track-info">Loading track info...</div>
+
+    <div class="live-container">
+      <div class="live-indicator"></div>
+      <span class="live-text">LIVE</span>
     </div>
 
-    <script>
-      const playButton = document.getElementById("play-button")
-      const audioPlayer = document.getElementById("audio-player")
-      const albumArt = document.getElementById("album-art")
-      const trackInfo = document.getElementById("track-info")
-      const trackListContainer = document.getElementById("track-list-container")
-      const recentTracks = document.getElementById("recent-tracks")
+    <audio id="audio-player">
+      <source src="https://a6.asurahosting.com:7530/radio.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
 
-      let isPlaying = false // Start with audio not playing
+    <div class="play-pause-container">
+      <button id="play-button" class="play-pause-button">▶️</button>
+    </div>
 
-      function updateMediaSession(nowPlaying) {
-        if ("mediaSession" in navigator) {
-          navigator.mediaSession.metadata = new MediaMetadata({
-            title: nowPlaying.title,
-            artist: nowPlaying.artist || "Unknown Artist",
-            album: nowPlaying.album || "Unknown Album",
-            artwork: [
-              { src: nowPlaying.art, sizes: "512x512", type: "image/jpeg" },
-            ],
-          })
+    <button class="toggle-button" onclick="toggleRecentTracks()">
+      Show Recent Tracks
+    </button>
 
-          navigator.mediaSession.setActionHandler("play", () =>
-            audioPlayer.play(),
-          )
-          navigator.mediaSession.setActionHandler("pause", () =>
-            audioPlayer.pause(),
-          )
-        }
+    <div id="recent-tracks" class="recent-tracks">
+      <div id="track-list-container"></div>
+    </div>
+  </div>
+
+  <script>
+    const playButton = document.getElementById("play-button");
+    const audioPlayer = document.getElementById("audio-player");
+    const albumArt = document.getElementById("album-art");
+    const trackInfo = document.getElementById("track-info");
+    const trackListContainer = document.getElementById("track-list-container");
+    const recentTracks = document.getElementById("recent-tracks");
+
+    let isPlaying = false; // Start with audio not playing
+
+    function updateMediaSession(nowPlaying) {
+      if ("mediaSession" in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: nowPlaying.title,
+          artist: nowPlaying.artist || "Unknown Artist",
+          album: nowPlaying.album || "Unknown Album",
+          artwork: [
+            { src: nowPlaying.art, sizes: "512x512", type: "image/jpeg" },
+          ],
+        });
+
+        navigator.mediaSession.setActionHandler("play", () =>
+          audioPlayer.play(),
+        );
+        navigator.mediaSession.setActionHandler("pause", () =>
+          audioPlayer.pause(),
+        );
       }
+    }
 
-      function fetchRecentTracks() {
-        fetch("https://a6.asurahosting.com/api/nowplaying/349")
-          .then((response) => response.json())
-          .then((data) => {
-            trackListContainer.innerHTML = ""
+    function fetchRecentTracks() {
+      fetch("https://a6.asurahosting.com/api/nowplaying/349")
+        .then((response) => response.json())
+        .then((data) => {
+          trackListContainer.innerHTML = "";
 
-            const nowPlaying = data.now_playing.song
-            const trackTitle = nowPlaying.title
-            const albumArtURL = nowPlaying.art
+          const nowPlaying = data.now_playing.song;
+          const trackTitle = nowPlaying.title;
+          const albumArtURL = nowPlaying.art;
 
-            trackInfo.textContent = trackTitle
-            albumArt.src = albumArtURL
+          // Only update track info if it's different
+          if (trackInfo.textContent !== trackTitle) {
+            trackInfo.textContent = trackTitle;
+          }
 
-            updateMediaSession(nowPlaying)
+          // Only update album art if it's different
+          if (albumArt.src !== albumArtURL) {
+            albumArt.src = albumArtURL;
+          }
 
-            const songHistory = data.song_history
-            for (let i = 0; i < Math.min(songHistory.length, 5); i++) {
-              const track = songHistory[i]
-              const trackEntry = document.createElement("div")
-              trackEntry.classList.add("track-list")
+          updateMediaSession(nowPlaying);
 
-              trackEntry.innerHTML = `
-                            <img class="small-album-art" src="${track.song.art}" alt="Album Art">
-                            <div>
-                                <strong>${track.song.title}</strong><br>
-                                <span>${track.song.album}</span>
-                            </div>
-                        `
+          const songHistory = data.song_history;
+          for (let i = 0; i < Math.min(songHistory.length, 5); i++) {
+            const track = songHistory[i];
+            const trackEntry = document.createElement("div");
+            trackEntry.classList.add("track-list");
 
-              trackListContainer.appendChild(trackEntry)
-            }
-          })
-          .catch((error) => {
-            console.error("Error fetching metadata:", error)
-            trackInfo.textContent = "Unable to fetch metadata"
-          })
+            trackEntry.innerHTML = `
+                <img class="small-album-art" src="${track.song.art}" alt="Album Art">
+                <div>
+                    <strong>${track.song.title}</strong><br>
+                    <span>${track.song.album}</span>
+                </div>
+              `;
+
+            trackListContainer.appendChild(trackEntry);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching metadata:", error);
+          trackInfo.textContent = "Unable to fetch metadata";
+        });
+    }
+
+    playButton.addEventListener("click", () => {
+      if (isPlaying) {
+        audioPlayer.pause();
+        playButton.textContent = "▶️";
+      } else {
+        audioPlayer.play();
+        playButton.textContent = "⏸️";
       }
+      isPlaying = !isPlaying;
+    });
 
-      playButton.addEventListener("click", () => {
-        if (isPlaying) {
-          audioPlayer.pause()
-          playButton.textContent = "▶️"
-        } else {
-          audioPlayer.play()
-          playButton.textContent = "⏸️"
-        }
-        isPlaying = !isPlaying
-      })
+    function toggleRecentTracks() {
+      recentTracks.classList.toggle("show");
+      fetchRecentTracks(); // Fetch tracks when showing the list
+    }
 
-      function toggleRecentTracks() {
-        recentTracks.classList.toggle("show")
-        fetchRecentTracks() // Fetch tracks when showing the list
-      }
+    // Initial fetch of recent tracks when the page loads
+    fetchRecentTracks();
 
-      // Initial fetch of recent tracks when the page loads
-      fetchRecentTracks()
-    </script>
-  </body>
+    // Set an interval to fetch recent tracks every 10 seconds
+    setInterval(fetchRecentTracks, 10000); // Fetch every 10 seconds
+  </script>
+</body>
+
 </html>
