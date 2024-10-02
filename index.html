@@ -43,10 +43,15 @@
       position: relative;
     }
 
+    .album-art-wrapper {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
+
     .station-title {
       font-family: "Frijole", cursive;
       font-size: 24px;
-      font-weight: bold;
       text-align: center;
       margin-bottom: 10px;
     }
@@ -183,7 +188,7 @@
     <div class="station-title">DK 24/7 Radio</div>
 
     <div class="album-art-wrapper">
-      <img id="album-art" class="album-art" src="default-art.jpg" alt="Album Art" />
+      <img id="album-art" class="album-art" src="default-art.jpg" alt="Album Art" width="70%" />
     </div>
     <div id="track-info" class="track-info">Loading track info...</div>
 
