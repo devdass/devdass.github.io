@@ -231,17 +231,26 @@
 
     function updateMediaSession(nowPlaying) {
       if ("mediaSession" in navigator) {
+        const combinedTitle = `${nowPlaying.title} - ${nowPlaying.artist || "Unknown Artist"}`;
         navigator.mediaSession.metadata = new MediaMetadata({
-          title: nowPlaying.title,
-          artist: nowPlaying.artist || "Unknown Artist",
-          album: nowPlaying.album || "Unknown Album",
+          title: combinedTitle,
+          artist: "radio.devdass.com",
+          album: nowPlaying.album || "DK 24/7 Radio",
           artwork: [
             { src: nowPlaying.art, sizes: "512x512", type: "image/jpeg" },
           ],
         });
 
-        navigator.mediaSession.setActionHandler("play", () => audioPlayer.play());
-        navigator.mediaSession.setActionHandler("pause", () => audioPlayer.pause());
+        navigator.mediaSession.setActionHandler("play", () => {
+          audioPlayer.play();
+          playButton.textContent = "⏸️";
+          isPlaying = true;
+        });
+        navigator.mediaSession.setActionHandler("pause", () => {
+          audioPlayer.pause();
+          playButton.textContent = "▶️";
+          isPlaying = false;
+        });
       }
     }
 
