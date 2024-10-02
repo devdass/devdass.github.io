@@ -268,12 +268,13 @@
         .then((data) => {
           const nowPlaying = data.now_playing.song;
           const trackTitle = nowPlaying.title;
+          const artistName = nowPlaying.artist || "Unknown Artist";
           const albumArtURL = nowPlaying.art;
 
           // Master check: Only update if the current track has changed
-          if (trackInfo.textContent !== trackTitle) {
+          if (trackInfo.textContent !== `${trackTitle} - ${artistName}`) {
             // Update track info
-            trackInfo.textContent = trackTitle;
+            trackInfo.textContent = `${trackTitle} - ${artistName}`;
 
             // Update album art
             if (albumArtURL !== albumArt.src) {
@@ -294,7 +295,7 @@
             <img class="small-album-art" src="${track.song.art}" alt="Album Art">
             <div>
               <strong>${track.song.title}</strong><br>
-              <span>${track.song.album}</span>
+              <span>${track.song.artist || "Unknown Artist"}</span>
             </div>
           `;
               trackListContainer.appendChild(trackEntry);
