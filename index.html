@@ -8,14 +8,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Frijole&display=swap" rel="stylesheet" />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
-  
-  <link rel="apple-touch-icon" href="icon-180.png" sizes="180x180">
-
   <meta name="theme-color" content="#000000" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="DK 24/7 Radio">
-  <meta name="application-name" content="DK 24/7 Radio">
 
   <style>
     body {
@@ -83,9 +79,12 @@
     }
 
     @keyframes blink {
-      0%, 100% {
+
+      0%,
+      100% {
         opacity: 1;
       }
+
       50% {
         opacity: 0;
       }
@@ -241,39 +240,37 @@
       fetch("https://a6.asurahosting.com/api/nowplaying/349")
         .then((response) => response.json())
         .then((data) => {
-          trackListContainer.innerHTML = "";
-
           const nowPlaying = data.now_playing.song;
           const trackTitle = nowPlaying.title;
           const albumArtURL = nowPlaying.art;
 
-          // Only update track info if it's different
+          // Master check: Only update if the current track has changed
           if (trackInfo.textContent !== trackTitle) {
+            // Update track info
             trackInfo.textContent = trackTitle;
-          }
 
-          // Only update album art if it's different
-          if (albumArt.src !== albumArtURL) {
+            // Update album art
             albumArt.src = albumArtURL;
-          }
 
-          updateMediaSession(nowPlaying);
+            // Update media session
+            updateMediaSession(nowPlaying);
 
-          const songHistory = data.song_history;
-          for (let i = 0; i < Math.min(songHistory.length, 5); i++) {
-            const track = songHistory[i];
-            const trackEntry = document.createElement("div");
-            trackEntry.classList.add("track-list");
-
-            trackEntry.innerHTML = `
-                <img class="small-album-art" src="${track.song.art}" alt="Album Art">
-                <div>
-                    <strong>${track.song.title}</strong><br>
-                    <span>${track.song.album}</span>
-                </div>
-              `;
-
-            trackListContainer.appendChild(trackEntry);
+            // Update track list
+            trackListContainer.innerHTML = "";
+            const songHistory = data.song_history;
+            for (let i = 0; i < Math.min(songHistory.length, 5); i++) {
+              const track = songHistory[i];
+              const trackEntry = document.createElement("div");
+              trackEntry.classList.add("track-list");
+              trackEntry.innerHTML = `
+            <img class="small-album-art" src="${track.song.art}" alt="Album Art">
+            <div>
+              <strong>${track.song.title}</strong><br>
+              <span>${track.song.album}</span>
+            </div>
+          `;
+              trackListContainer.appendChild(trackEntry);
+            }
           }
         })
         .catch((error) => {
