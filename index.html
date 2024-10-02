@@ -13,6 +13,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="DK 24/7 Radio">
 
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <style>
     body {
       font-family: "Arial", sans-serif;
@@ -242,7 +246,7 @@
     }
 
     function fetchRecentTracks() {
-      fetch("https://a6.asurahosting.com/api/nowplaying/349")
+      fetch(`https://a6.asurahosting.com/api/nowplaying/349?_=${timestamp}`)
         .then((response) => response.json())
         .then((data) => {
           const nowPlaying = data.now_playing.song;
