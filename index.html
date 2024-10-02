@@ -20,7 +20,9 @@
   <style>
     body {
       font-family: "Arial", sans-serif;
-      background: url("https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(1).jpg") no-repeat center center fixed;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-attachment: fixed;
       background-size: cover;
       color: white;
       display: flex;
@@ -318,6 +320,26 @@
 
     // Set an interval to fetch recent tracks every 10 seconds
     setInterval(fetchRecentTracks, 10000); // Fetch every 10 seconds
+
+    // Add the following code for random background
+    const backgroundImages = [
+      "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(1).jpg",
+      "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(2).jpg",
+      "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(3).jpg",
+      "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(4).jpg",
+      "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(5).jpg"
+      "https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/Backgrouds/bg%20(6).jpg"
+    ];
+
+    function setRandomBackground() {
+      const randomIndex = Math.floor(Math.random() * backgroundImages.length);
+      const selectedBackground = backgroundImages[randomIndex];
+      document.body.style.backgroundImage = `url('${selectedBackground}')`;
+    }
+
+    // Call the function when the page loads
+    document.addEventListener('DOMContentLoaded', setRandomBackground);
+
   </script>
 
   <script>
