@@ -246,7 +246,7 @@
     }
 
     function fetchRecentTracks() {
-      fetch(`https://a6.asurahosting.com/api/nowplaying/349?_=${timestamp}`)
+      fetch("https://a6.asurahosting.com/api/nowplaying/349?_=${timestamp}")
         .then((response) => response.json())
         .then((data) => {
           const nowPlaying = data.now_playing.song;
