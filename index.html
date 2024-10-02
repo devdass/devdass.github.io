@@ -200,7 +200,7 @@
     <div class="station-title">DK 24/7 Radio</div>
 
     <div class="album-art-wrapper">
-      <img id="album-art" class="album-art" src="default-art.jpg" alt="Album Art" />
+      <img id="album-art" class="album-art" src="https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/gif.gif" alt="Album Art" />
     </div>
     <div id="track-info" class="track-info">Loading track info...</div>
 
@@ -276,7 +276,9 @@
             trackInfo.textContent = trackTitle;
 
             // Update album art
-            albumArt.src = albumArtURL;
+            if (albumArtURL !== albumArt.src) {
+              albumArt.src = albumArtURL;
+            }
 
             // Update media session
             updateMediaSession(nowPlaying);
