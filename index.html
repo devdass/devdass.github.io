@@ -191,7 +191,6 @@
       border-radius: 5px;
     }
   </style>
-
 </head>
 
 <body>
@@ -199,7 +198,8 @@
     <div class="station-title">DK 24/7 Radio</div>
 
     <div class="album-art-wrapper">
-      <img id="album-art" class="album-art" src="https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/gif.gif" alt="Album Art" />
+      <img id="album-art" class="album-art"
+        src="https://raw.githubusercontent.com/devdass/devdass.github.io/refs/heads/main/gif.gif" alt="Album Art" />
     </div>
     <div id="track-info" class="track-info">Loading track info...</div>
 
@@ -236,9 +236,69 @@
 
     let isPlaying = false; // Start with audio not playing
 
+    function getPrefix(playlist) {
+      if (playlist === "NZ Music") return "🇳🇿 ";
+      if (playlist === "Putaria") return "🇧🇷 ";
+      return "";
+    }
+
+    function fetchRecentTracks() {
+      const timestamp = new Date().getTime(); // Prevent caching
+      fetch(`https://a6.asurahosting.com/api/nowplaying/349?_=${timestamp}`)
+        .then((response) => response.json())
+        .then((data) => {
+          const nowPlaying = data.now_playing.song;
+
+          // Now Playing: Use the correct playlist field for the now playing song
+          const nowPlayingPrefix = getPrefix(data.now_playing.playlist); // Playlist field might be different here
+          const nowPlayingTrackTitle = `${nowPlayingPrefix}${nowPlaying.title}`;
+          const nowPlayingArtistName = nowPlaying.artist || "Unknown Artist";
+          const nowPlayingAlbumArtURL = nowPlaying.art;
+
+          // Check if the current track has changed
+          if (trackInfo.textContent !== `${nowPlayingTrackTitle} - ${nowPlayingArtistName}`) {
+            // Update the track info with the prefix
+            trackInfo.textContent = `${nowPlayingTrackTitle} - ${nowPlayingArtistName}`;
+
+            // Update album art
+            if (nowPlayingAlbumArtURL !== albumArt.src) {
+              albumArt.src = nowPlayingAlbumArtURL;
+            }
+
+            // Update the media session metadata
+            updateMediaSession(nowPlaying);
+
+            // Update the recent track list
+            trackListContainer.innerHTML = "";
+            const songHistory = data.song_history;
+            for (let i = 0; i < Math.min(songHistory.length, 5); i++) {
+              const track = songHistory[i];
+
+              // Song History: Use the correct playlist field for the song history
+              const historyPrefix = getPrefix(track.playlist); // Playlist field might be different here
+              const trackEntry = document.createElement("div");
+              trackEntry.classList.add("track-list");
+              trackEntry.innerHTML = `
+            <img class="small-album-art" src="${track.song.art}" alt="Album Art">
+            <div>
+              <strong>${historyPrefix}${track.song.title}</strong><br>
+              <span>${track.song.artist || "Unknown Artist"}</span>
+            </div>
+          `;
+              trackListContainer.appendChild(trackEntry);
+            }
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching metadata:", error);
+          trackInfo.textContent = "Unable to fetch metadata";
+        });
+    }
+
     function updateMediaSession(nowPlaying) {
       if ("mediaSession" in navigator) {
-        const combinedTitle = `${nowPlaying.title} - ${nowPlaying.artist || "Unknown Artist"}`;
+        const prefix = getPrefix(nowPlaying.playlist);
+        const combinedTitle = `${prefix}${nowPlaying.title} - ${nowPlaying.artist || "Unknown Artist"}`;
         navigator.mediaSession.metadata = new MediaMetadata({
           title: combinedTitle,
           artist: "radio.devdass.com",
@@ -261,51 +321,6 @@
       }
     }
 
-    function fetchRecentTracks() {
-      fetch("https://a6.asurahosting.com/api/nowplaying/349?_=${timestamp}")
-        .then((response) => response.json())
-        .then((data) => {
-          const nowPlaying = data.now_playing.song;
-          const trackTitle = nowPlaying.title;
-          const artistName = nowPlaying.artist || "Unknown Artist";
-          const albumArtURL = nowPlaying.art;
-
-          // Master check: Only update if the current track has changed
-          if (trackInfo.textContent !== `${trackTitle} - ${artistName}`) {
-            // Update track info
-            trackInfo.textContent = `${trackTitle} - ${artistName}`;
-
-            // Update album art
-            if (albumArtURL !== albumArt.src) {
-              albumArt.src = albumArtURL;
-            }
-
-            // Update media session
-            updateMediaSession(nowPlaying);
-
-            // Update track list
-            trackListContainer.innerHTML = "";
-            const songHistory = data.song_history;
-            for (let i = 0; i < Math.min(songHistory.length, 5); i++) {
-              const track = songHistory[i];
-              const trackEntry = document.createElement("div");
-              trackEntry.classList.add("track-list");
-              trackEntry.innerHTML = `
-            <img class="small-album-art" src="${track.song.art}" alt="Album Art">
-            <div>
-              <strong>${track.song.title}</strong><br>
-              <span>${track.song.artist || "Unknown Artist"}</span>
-            </div>
-          `;
-              trackListContainer.appendChild(trackEntry);
-            }
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching metadata:", error);
-          trackInfo.textContent = "Unable to fetch metadata";
-        });
-    }
 
     playButton.addEventListener("click", () => {
       if (isPlaying) {
@@ -347,7 +362,6 @@
 
     // Call the function when the page loads
     document.addEventListener('DOMContentLoaded', setRandomBackground);
-
   </script>
 
   <script>
@@ -363,7 +377,6 @@
       });
     }
   </script>
-
 </body>
 
 </html>
